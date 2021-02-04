@@ -1,5 +1,6 @@
 img="";
 status="";
+objects=[];
 function preload(){
     img=loadImage("dog_cat.jpg");
 }
@@ -7,20 +8,21 @@ function setup(){
     canvas=createCanvas(640,420);
     canvas.center();
     objectDetector=ml5.objectDetector('CocoSsd',modelLoaded);
-    document.getElementById("status").innerHTML="Status:Detecting Object";
+    document.getElementById("status").innerHTML="Status:Detecting Objects";
 }
 function draw(){
     image(img,0,0,640,420);
-    fill('#228B22');
-    text("Dog",45,75);
-    noFill();
-    stroke('#228B22');
-    rect(30,60,450,350);
-    fill('#228B22');
-    text("Cat",400,100);
-    noFill();
-    stroke('#228B22');
-    rect(270,90,350,500);
+    if(status !=""){
+        for( i = 0; i < objects.length; i++){
+            document.getElementById("status").innerHTML="Status:Detected Objects";
+            fill('#93e9be');
+            percent=floor(objects[i].confidence * 100);
+            text(objects[i].label+" "+percent+"%",objects[i].x+15,objects.y+15);
+            noFill();
+            stroke('#93e9be');
+            rect(objects[i].x,objects.y,objects[i].width,objects[i].height);
+        }
+    }
 }
 function modelLoaded(){
     console.log("Model Loaded!");
@@ -32,4 +34,5 @@ function gotResults(error,results){
         console.log(error);
     }
         console.log(results);
+        objects=results;
     }
